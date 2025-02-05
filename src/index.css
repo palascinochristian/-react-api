@@ -104,7 +104,6 @@ form {
   display: flex;
   flex-direction: column;
   width: 50%;
-  margin-top: 1.25rem;
   border: 2px solid #ad4a26;
   padding: 1.25rem;
   border-radius: 0.3125rem;
