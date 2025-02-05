@@ -62,23 +62,19 @@ h2 .recipe-title {
   gap: 5px;
   flex-direction: column;
   line-height: 1.48;
+  margin-bottom: 0.625rem;
 }
 
-.recipe-image {
-  max-width: 10%;
+.recipe-image img {
+  width: 80%;
+  border-radius: 12rem;
+  border: 2px solid #ad4a26;
+  display: flex;
+  justify-self: center;
 }
 
-.recipe-category {
+.recipe-tags {
   color: #ab3115;
-}
-
-.recipe-published {
-  margin: 0.3125rem;
-  background-color: #ad4a26;
-  border-radius: 0.3125rem;
-  padding: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: bold;
 }
 
 .recipe button {

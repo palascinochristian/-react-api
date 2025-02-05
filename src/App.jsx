@@ -1,6 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function App() {
+  const [recipesList, setRecipeList] = useState([]);
+
+  //Richiesta API al backand per .json con array di oggetti (recipes)
+  const fetchRecipes = () => {
+    axios.get("http://localhost:3001/posts").then((res) => {
+      setRecipeList(res.data);
+    });
+  };
+
+  //UseEffetc per eseguire la richiesta SOLO al caricamento della pagina
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  //Inizializzo una variabile per il form
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -8,8 +24,7 @@ export default function App() {
     tags: "",
   });
 
-  const [recipesList, setRecipeList] = useState([]);
-
+  //Passo i valori inseriti nel form
   const handleFormField = (fieldName, value) => {
     setFormData((current) => ({
       ...current,
@@ -17,28 +32,36 @@ export default function App() {
     }));
   };
 
+  //Aggiungo una nuova ricetta facendo una richiesta POST al server backend
   const addNewRecipe = (e) => {
     e.preventDefault();
-    setRecipeList((current) => [...current, formData]);
-    setFormData({
-      title: "",
-      content: "",
-      image: "",
-      tags: "",
+    axios.post("http://localhost:3001/posts", formData).then((res) => {
+      setRecipeList((current) => [...current, res.data]);
+      setFormData({
+        title: "",
+        content: "",
+        image: "",
+        tags: [],
+      });
     });
   };
 
+  // Elimino una delle ricette presenti facendo una richiesta DELETE al server backend
   const deleteRecipe = (recipeToDelete) => {
-    setRecipeList((current) =>
-      current.filter((recipe) => recipe !== recipeToDelete)
-    );
+    axios
+      .delete(`http://localhost:3001/posts/${recipeToDelete.id}`)
+      .then(() => {
+        setRecipeList((current) =>
+          current.filter((recipe) => recipe.id !== recipeToDelete.id)
+        );
+      });
   };
 
   return (
     <>
       <div className="container">
         <div className="recipeList">
-          {recipesList.map((recipe, index) => {
+          {recipesList.map((recipe) => {
             return (
               <>
                 <div className="recipe">
@@ -49,7 +72,15 @@ export default function App() {
                   <div className="recipe-content">
                     {recipe.content}
                     <div className="recipe-image">
-                      <img src={recipe.image} alt={recipe.title} />
+                      <img
+                        src={
+                          recipe.image.startsWith("http://") ||
+                          recipe.image.startsWith("https://")
+                            ? recipe.image
+                            : `http://localhost:3001${recipe.image}`
+                        }
+                        alt={recipe.title}
+                      />
                     </div>
                     <div className="recipe-tags">Tags: {recipe.tags}</div>
                   </div>
@@ -59,6 +90,7 @@ export default function App() {
               </>
             );
           })}
+
           <form onSubmit={addNewRecipe}>
             <label htmlFor="title">Nome ricetta:</label>
             <input
@@ -91,7 +123,7 @@ export default function App() {
               name="tags"
               id="tags"
               value={formData.tags}
-              onChange={(e) => handleFormField("tags", e.target.value)}
+              onChange={(e) => handleFormField("tags", [e.target.value])}
             >
               <option value="Dolce">Dolce</option>
               <option value="Salato">Salato</option>
