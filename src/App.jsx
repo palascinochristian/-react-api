@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 
 export default function App() {
@@ -63,7 +63,7 @@ export default function App() {
         <div className="recipeList">
           {recipesList.map((recipe) => {
             return (
-              <>
+              <Fragment key={recipe.id}>
                 <div className="recipe">
                   <h2 className="recipe-title">{recipe.title}</h2>
                   <button onClick={() => deleteRecipe(recipe)}>🗑️</button>
@@ -87,7 +87,7 @@ export default function App() {
                 ) : (
                   ""
                 )}
-              </>
+              </Fragment>
             );
           })}
 
